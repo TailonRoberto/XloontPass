@@ -1,0 +1,93 @@
+﻿@model IEnumerable<PasswordManager.Models.PasswordEntry>
+
+@{
+    ViewData["Title"] = "Your Passwords";
+    //Layout = "/Views/Shared/_Layout.cshtml"; // Adicione esta linha
+}
+
+<div class="container">
+    <h1>Your Passwords</h1>
+
+    <!-- Botão para criar uma nova senha -->
+    <div class="mb-3">
+        <a href="/Passwords/Create" class="btn btn-primary">Create New</a>
+    </div>
+
+    <!-- Tabela para exibir as senhas -->
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EncryptedPassword)
+                </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EncryptedPassword)
+                        <button class="btn btn-sm btn-secondary copy-btn" data-password="@item.EncryptedPassword">
+                            Copiar
+                        </button>
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Edit", "Passwords", new { id = item.Id })" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="@Url.Action("Delete", "Passwords", new { id = item.Id })" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM fully loaded and parsed');
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        console.log('Copy buttons:', copyButtons);
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const password = button.getAttribute('data-password');
+                console.log(`Button clicked, password to copy: ${password}`);
+                copyToClipboard(password);
+            });
+        });
+    });
+
+    function copyToClipboard(text) {
+        console.log(`Attempting to copy: ${text}`);
+        if (navigator.clipboard && window.isSecureContext) {
+            // navigator.clipboard API method
+            navigator.clipboard.writeText(text).then(() => {
+                console.log('Password copied successfully!');
+                alert('Senha copiada para a área de transferência!');
+            }, (err) => {
+                console.error('Erro ao copiar: ', err);
+            });
+        } else {
+            // document.execCommand fallback method
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                const successful = document.execCommand('copy');
+                const msg = successful ? 'successful' : 'unsuccessful';
+                console.log(`Fallback: Copying text command was ${msg}`);
+                alert('Senha copiada para a área de transferência!');
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            document.body.removeChild(tempInput);
+        }
+    }
+</script>

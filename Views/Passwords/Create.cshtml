@@ -1,0 +1,51 @@
+﻿@model PasswordManager.Models.PasswordEntryViewModel
+
+@{
+    ViewData["Title"] = "Create Password";
+}
+
+<h1>Create Password</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" id="Title" name="Title" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EncryptedPassword" class="control-label"></label>
+                <input asp-for="EncryptedPassword" class="form-control" id="EncryptedPassword" name="EncryptedPassword" />
+                <span asp-validation-for="EncryptedPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            <div>
+                <input type="button" value="Debug" class="btn btn-info" onclick="debugInputs()" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Passwords" asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
+
+<script>
+    function debugInputs() {
+        var title = document.getElementById('Title').value;
+        var encryptedPassword = document.getElementById('EncryptedPassword').value;
+        console.log('Title:', title);
+        console.log('EncryptedPassword:', encryptedPassword);
+    }
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
